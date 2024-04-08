@@ -1,25 +1,32 @@
 // Example service file for project-related operations
-const Project = require('../models/projectModel');
 
-// Define service functions
-const getAllProjects = async () => {
-  try {
-    return await Project.find();
-  } catch (error) {
-    throw new Error('Error retrieving projects');
-  }
-};
-
-const createProject = async (projectData) => {
-  try {
-    return await Project.create(projectData);
-  } catch (error) {
-    throw new Error('Error creating project');
-  }
-};
-
-// Export service functions
-module.exports = {
-  getAllProjects,
-  createProject
-};
+// Example data - you can replace this with actual database integration
+let projects = [
+    { id: 1, name: 'Project 1', description: 'Description for Project 1' },
+    { id: 2, name: 'Project 2', description: 'Description for Project 2' },
+    // Add more projects as needed
+  ];
+  
+  // Define service functions
+  const getAllProjects = () => {
+    return projects;
+  };
+  
+  const getProjectById = (projectId) => {
+    return projects.find(project => project.id === projectId);
+  };
+  
+  const createProject = (projectData) => {
+    // Simulate creating a new project in the database
+    const newProject = { id: projects.length + 1, ...projectData };
+    projects.push(newProject);
+    return newProject;
+  };
+  
+  // Export service functions
+  module.exports = {
+    getAllProjects,
+    getProjectById,
+    createProject
+  };
+  

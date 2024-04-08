@@ -1,24 +1,19 @@
-const Project = require('../models/projectModel');
+// Example controller file for project-related logic
+
+const projectService = require('../services/projectService');
 
 // Define controller functions
-const getProjects = async (req, res) => {
-  try {
-    const projects = await Project.find();
-    res.json(projects);
-  } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
-  }
+const getProjects = (req, res) => {
+  // Logic to fetch projects
+  const projects = projectService.getAllProjects();
+  res.json(projects);
 };
 
-const createProject = async (req, res) => {
-  try {
-    const { name, description } = req.body;
-    const project = new Project({ name, description });
-    await project.save();
-    res.status(201).json(project);
-  } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
-  }
+const createProject = (req, res) => {
+  // Logic to create a new project
+  const projectData = req.body;
+  const newProject = projectService.createProject(projectData);
+  res.status(201).json(newProject);
 };
 
 // Export controller functions
