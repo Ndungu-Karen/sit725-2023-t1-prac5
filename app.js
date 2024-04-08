@@ -1,29 +1,36 @@
 const express = require('express');
-const app = express();
+const mongoose = require('mongoose');
 const routes = require('./routes');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json()); // Parse JSON request bodies
-app.use('/api', routes); // Mount routes under /api prefix
 
-// Define a simple route for the root URL
+// Routes
+app.use('/api', routes); // Mount routes under /api prefix
+// Define a route for the root URL
 app.get('/', (req, res) => {
   res.send('Welcome to your Express.js MVC app!');
 });
 
-// Define a route for handling 404 errors
-app.use((req, res, next) => {
-  res.status(404).send("Sorry, can't find that!");
-});
 
-// Define a route for handling errors
+// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  res.status(500).send('Internal Server Error');
 });
 
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Connect to MongoDB
+mongoose.connect('mongodb+srv://Ndungu:Ndungu@cluster0.mhjgspt.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('Connected to MongoDB');
+    // Start the server after successfully connecting to MongoDB
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch(err => {
+    console.error('Error connecting to MongoDB:', err);
+  });
