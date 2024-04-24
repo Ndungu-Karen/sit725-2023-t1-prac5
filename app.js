@@ -1,29 +1,40 @@
-const express = require('express');
+// Import required modules
+const express = require("express");
+const mongoose = require('mongoose');
+const projectsRoute = require('./routes/projects'); // Import the projects route
+
+// Create an Express application instance
 const app = express();
-const routes = require('./routes');
 
-// Middleware
-app.use(express.json()); // Parse JSON request bodies
-app.use('/api', routes); // Mount routes under /api prefix
+// Middleware to parse JSON requests
+app.use(express.json());
 
-// Define a simple route for the root URL
+// Middleware to parse URL-encoded requests
+app.use(express.urlencoded({ extended: false }));
+
+// Serve static files from the public directory (if needed)
+app.use(express.static(__dirname + '/public'));
+
+// Define routes
+app.use('/api/projects', projectsRoute); // Mount the projects route under /api/projects
+
+// Define a route for the root URL
 app.get('/', (req, res) => {
   res.send('Welcome to your Express.js MVC app!');
 });
 
-// Define a route for handling 404 errors
-app.use((req, res, next) => {
-  res.status(404).send("Sorry, can't find that!");
+// MongoDB connection
+mongoose.connect('mongodb+srv://Ndungu:Ndungu@cluster0.mhjgspt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('Error connecting to MongoDB:', err));
+
+// Define the port for the server to listen on
+const port = process.env.PORT || 6000;
+
+// Start the server and listen on the specified port
+app.listen(port, () => {
+    console.log("App listening on port: " + port);
 });
 
-// Define a route for handling errors
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
-
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Export the Express app instance (if needed)
+module.exports = app;

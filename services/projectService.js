@@ -1,32 +1,66 @@
-// Example service file for project-related operations
+const Project = require('../models/projectModel');
 
-// Example data - you can replace this with actual database integration
-let projects = [
-    { id: 1, name: 'Project 1', description: 'Description for Project 1' },
-    { id: 2, name: 'Project 2', description: 'Description for Project 2' },
-    // Add more projects as needed
-  ];
-  
-  // Define service functions
-  const getAllProjects = () => {
-    return projects;
-  };
-  
-  const getProjectById = (projectId) => {
-    return projects.find(project => project.id === projectId);
-  };
-  
-  const createProject = (projectData) => {
-    // Simulate creating a new project in the database
-    const newProject = { id: projects.length + 1, ...projectData };
-    projects.push(newProject);
-    return newProject;
-  };
-  
-  // Export service functions
-  module.exports = {
-    getAllProjects,
-    getProjectById,
-    createProject
-  };
-  
+// Service to handle CRUD operations for projects
+const projectService = {
+    // Get all projects
+    async getAllProjects() {
+        try {
+            const projects = await Project.find();
+            return projects;
+        } catch (error) {
+            throw new Error('Error fetching projects from the database');
+        }
+    },
+
+    // Get a project by ID
+    async getProjectById(id) {
+        try {
+            const project = await Project.findById(id);
+            if (!project) {
+                throw new Error('Project not found');
+            }
+            return project;
+        } catch (error) {
+            throw new Error('Error fetching project from the database');
+        }
+    },
+
+    // Create a new project
+    async createProject(projectData) {
+        try {
+            const project = new Project(projectData);
+            await project.save();
+            return project;
+        } catch (error) {
+            throw new Error('Error creating project in the database');
+        }
+    },
+
+    // Update an existing project
+    async updateProject(id, updatedProjectData) {
+        try {
+            const project = await Project.findByIdAndUpdate(id, updatedProjectData, { new: true });
+            if (!project) {
+                throw new Error('Project not found');
+            }
+            return project;
+        } catch (error) {
+            throw new Error('Error updating project in the database');
+        }
+    },
+
+    // Delete a project
+    async deleteProject(id) {
+        try {
+            const project = await Project.findByIdAndDelete(id);
+            if (!project) {
+                throw new Error('Project not found');
+            }
+            return { message: 'Project deleted successfully' };
+        } catch (error) {
+            throw new Error('Error deleting project from the database');
+        }
+    }
+};
+
+module.exports = projectService;
